@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auth System</title>
+</head>
+<body>
+
+  <h2>Signup</h2>
+  <input id="signupName" placeholder="Name"><br>
+  <input id="signupEmail" placeholder="Email"><br>
+  <input id="signupPassword" placeholder="Password"><br>
+  <button onclick="signup()">Signup</button>
+
+  <h2>Login</h2>
+  <input id="loginEmail" placeholder="Email"><br>
+  <input id="loginPassword" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+
+  <h2>Dashboard</h2>
+  <button onclick="getDashboard()">Get Dashboard</button>
+
+  <p id="output"></p>
+
+<script>
+let token = "";
+
+// Signup
+async function signup() {
+  const res = await fetch("http://localhost:5000/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: document.getElementById("signupName").value,
+      email: document.getElementById("signupEmail").value,
+      password: document.getElementById("signupPassword").value
+    })
+  });
+
+  const data = await res.text();
+  document.getElementById("output").innerText = data;
+}
+
+// Login
+async function login() {
+  const res = await fetch("http://localhost:5000/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: document.getElementById("loginEmail").value,
+      password: document.getElementById("loginPassword").value
+    })
+  });
+
+  const data = await res.json();
+  token = data.token; // 🔑 store token
+  document.getElementById("output").innerText = "Login successful!";
+}
+
+// Dashboard
+async function getDashboard() {
+  const res = await fetch("http://localhost:5000/dashboard", {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+
+  const data = await res.text();
+  document.getElementById("output").innerText = data;
+}
+</script>
+
+</body>
+</html>
